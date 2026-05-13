@@ -58,7 +58,7 @@ spec:
             secretKeyRef:
               key: CLUSTER_MANAGEMENT_REPOSITORY
               name: cluster-management-ci-token
-      image: quay.io/kuadrant/testsuite-pipelines-tools:latest
+      image: quay.io/kuadrant/testsuite-pipelines-tools:fix-osia-v4
       imagePullPolicy: Always
       name: provision-aws-ocp
       volumeMounts:
@@ -81,16 +81,17 @@ spec:
 
           # Run osia install
           cd cluster-management
-          AWS_SHARED_CREDENTIALS_FILE=aws-credentials.conf
           osia install \
+            --credentials-file aws-credentials.conf \
+            --dns-credentials-file aws-credentials.conf \
             --installer-version $(params.installer-version) \
+            --cluster-architecture arm64 \
             --cluster-name $(params.cluster-name) \
             --cloud aws \
             --cloud-env kua-aws \
             --master-flavor $(params.master-size) \
             --worker-flavor $(params.worker-size) \
             --list-of-regions $(params.region) \
-            --installer-arch $(params.installer-arch) \
             --dns-provider route53 
 
           # Get cluster credentials
